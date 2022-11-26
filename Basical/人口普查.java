@@ -1,8 +1,10 @@
-package com.company.basical;
+package basicLevel;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * 某城镇进行人口普查，得到了全体居民的生日。现请你写个程序，找出镇上最年长和最年轻的人。
@@ -28,34 +30,37 @@ import java.io.InputStreamReader;
  * 3 Tom John
  */
 public class 人口普查 {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ParseException {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(bf.readLine());
-        //现在的时间
-        String now = "2014/09/06";
-        //最早的合格时间
-        String past = "1814/09/06";
-        //记录最年长和最年轻的人的姓名
-        String young = "", old = "";
-        //记录最年长和最年轻人的年龄
-        String ageold = "2014/09/06";
-        String ageyoung = "1814/09/06";
-        //计算有效的生日的个数
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        //今天的时间
+        Date now = sdf.parse("2014/09/06");
+        //计算有效生日的人的姓名和年龄
         int count = 0;
-        for (int i = 0; i < n; i++) {
-            String[] data = bf.readLine().split(" ");
-            if(data[1].compareTo(now) <= 0 && data[1].compareTo(past) >= 0){
-                count++;
-                if(data[1].compareTo(ageold) < 0){
-                    old = data[0];
-                    ageold = data[1];
-                }
-                if(data[1].compareTo(ageyoung) > 0){
-                    young = data[0];
-                    ageyoung = data[1];
+        int max = 0, min = 200 * 365;
+        String maxNa = "", minNa = "";
+        while(n > 0){
+            String[] line = bf.readLine().split(" ");
+            Date birth = sdf.parse(line[1]);
+            //有效生日
+            if(birth.before(now)){
+                int days = (int) ((now.getTime() - birth.getTime()) / (24 * 60 * 60 * 1000));
+                if(days <= 73049){
+                    count++;
+                    if(days > max){
+                        max = days;
+                        maxNa = line[0];
+                    }
+                    if(days < min){
+                        min = days;
+                        minNa = line[0];
+                    }
                 }
             }
+            n--;
         }
-        System.out.println(count + " " + old + " " + young);
+        //输出
+        System.out.println(count + " " + maxNa + " " + minNa);
     }
 }
